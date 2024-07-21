@@ -15,7 +15,8 @@ escrow_ignore {
     'integration/*.lua',
 
     -- 'client/*.lua',
-    -- 'server/*.lua',
+    -- 'server/server.lua',
+    -- 'server/server_functions.lua',
 }
 
 shared_script {
