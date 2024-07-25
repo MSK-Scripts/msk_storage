@@ -12,7 +12,6 @@ RegisterNetEvent('msk_storage:buyStorage', function(data)
     local src = source
     local xPlayer = ESX.GetPlayerFromId(src)
 
-    data.storageId = tonumber(data.storageId)    
     buyStorage(xPlayer, data)
 end)
 
@@ -35,10 +34,15 @@ MSK.Register('msk_storage:getPlayerStorage', function(source)
     local xPlayer = ESX.GetPlayerFromId(src)
 
     if database[xPlayer.identifier] and not database[xPlayer.identifier].unpaid then 
+        database[xPlayer.identifier].playerName = xPlayer.name -- Detect Name Change
         return database[xPlayer.identifier]
     end
 
     return false
+end)
+
+MSK.Register('msk_storage:getDatabase', function(source)
+    return database
 end)
 
 AddEventHandler('onResourceStop', function(resource)

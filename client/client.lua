@@ -126,13 +126,13 @@ CreateThread(function()
                             if Config.defaultTextUI then
                                 MSK.HelpNotification(Translation[Config.Locale]['open_storage']:format(storage.label))
                             elseif not Config.defaultTextUI then 
-                                Config.openTextUI(Translation[Config.Locale]['open_storage']:format(storage.label), Translation[Config.Locale]['open_storage_textui']:format(storage.label))
                                 shown = true
+                                Config.openTextUI(Translation[Config.Locale]['open_storage']:format(storage.label), Translation[Config.Locale]['open_storage_textui']:format(storage.label))
                             end
                         end
 
                         if IsControlJustReleased(0, Config.Hotkey) then
-                            shown = true                            
+                            shown = true
                             openStorage()
                         end
                     end
@@ -140,7 +140,9 @@ CreateThread(function()
             end
         end
 
-        if shown and not isNuiOpen then
+        if currentStorage and shown and not isNuiOpen and Config.defaultTextUI then
+            shown = false
+        elseif not currentStorage and shown then
             shown = false
 
             if not Config.defaultTextUI then 

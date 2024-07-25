@@ -1,7 +1,8 @@
 Config = {}
 ----------------------------------------------------------------
-Config.Locale = 'de'
+Config.Locale = 'en'
 Config.Debug = false
+Config.VersionChecker = true
 ----------------------------------------------------------------
 -- !!! This function is clientside AND serverside !!!
 Config.Notification = function(source, message, typ)
@@ -22,6 +23,16 @@ Config.npcVoice = {
 
 Config.PayCron = 7 -- in days // After X days the amount will be removed from player
 Config.MinBudget = 10000 -- Money that remains on the Bankaccount if Player can't pay
+
+-- Configured Societies will get a percentage of the storage price
+Config.Society = {
+    enable = false, -- Set true to activate this Feature // esx_addonaccount will be needed
+
+    societies = {
+        -- Example: ['society_jobname'] = percent // 0.01 is 1% // 0.1 is 10% // 1.0 is 100%
+        ['society_police'] = 0.2,
+    }
+}
 ----------------------------------------------------------------
 -- Set to 'chezza_v3', 'chezza_v4', 'ox_inventory' or 'custom'
 -- If set to 'custom' then go to integration folder and add your inventory

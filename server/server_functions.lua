@@ -36,6 +36,8 @@ doesStorageExist = function(identifier)
 end
 
 buyStorage = function(xPlayer, data)
+    data.storageId = tonumber(data.storageId) 
+    
     if xPlayer.getAccount(data.method).money < data.storageData.price then
         if data.method == 'money' then
             Config.Notification(xPlayer.source, Translation[Config.Locale]['not_enough_money'], 'error')
@@ -54,6 +56,7 @@ buyStorage = function(xPlayer, data)
         database[xPlayer.identifier].date = os.time() + (60 * 60 * 24 * Config.PayCron)
     else
         database[xPlayer.identifier] = {
+            playerName = xPlayer.name,
             storageId = data.storageId,
             storageData = data.storageData,
             uniqueId = createUniqueId(),
@@ -83,6 +86,7 @@ upgradeStorage = function(xPlayer, data)
     xPlayer.removeAccountMoney(data.method, data.storageData.price - database[xPlayer.identifier].storageData.price) -- Differenz Berechnnung
 
     database[xPlayer.identifier] = {
+        playerName = xPlayer.name,
         storageId = data.storageId,
         storageData = data.storageData,
         uniqueId = database[xPlayer.identifier].uniqueId
@@ -167,9 +171,10 @@ executeCron = function(identifier)
     
     if xPlayer then
         local money = xPlayer.getAccount('bank').money
-
+        
         if money >= database[identifier].storageData.price and Config.MinBudget >= (money - database[identifier].storageData.price) then
             xPlayer.removeAccountMoney('bank', database[identifier].storageData.price)
+            executeSociety(database[identifier].storageData.price)
         else
             removeCronjob(identifier)
             database[identifier].unpaid = true
@@ -178,15 +183,29 @@ executeCron = function(identifier)
         MySQL.query("SELECT * FROM users WHERE identifier = ?", {identifier}, function(data)
             if data and data[1] then
                 local account = json.decode(data[1].accounts)
-
+                
                 if account.bank >= database[identifier].storageData.price and Config.MinBudget >= (account.bank - database[identifier].storageData.price) then
                     account.bank = account.bank - database[identifier].storageData.price
                     MySQL.update("UPDATE users SET accounts = ? WHERE identifier = ?", {json.encode(account), identifier})
+                    executeSociety(database[identifier].storageData.price)
                 else
                     removeCronjob(identifier)
                     database[identifier].unpaid = true
                 end
             end
+        end)
+    end
+end
+
+executeSociety = function(storagePrice)
+    if not Config.Society.enable then return end
+
+    for societyName, percent in pairs(Config.Society.societies) do
+        local price = storagePrice * percent
+
+        TriggerEvent('esx_addonaccount:getSharedAccount', societyName, function(account)
+            if not account then return end
+            account.addMoney(price)
         end)
     end
 end
