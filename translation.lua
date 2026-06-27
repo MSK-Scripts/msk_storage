@@ -71,4 +71,40 @@ Translation = {
         ['ui_buy'] = 'Rent',
         ['ui_upgrade'] = 'Upgrade',
     },
+    ['hu'] = {
+        -- Script
+        ['open_storage'] = 'Nyomd meg az ~g~E~s~ gombot a raktár áttekintéséhez',
+        ['open_storage_textui'] = 'Nyomd meg az E gombot a raktár áttekintéséhez',
+
+        ['storage_bought'] = 'Sikeresen kibérelted a(z) %s %s raktárat %s Ft-ért.',
+        ['storage_upgraded'] = 'Sikeresen megújítottad/fejlesztetted a szerződésedet (%s %s) %s Ft-ért.',
+        ['storage_sold'] = 'Sikeresen felmondtad a bérleti szerződést.',
+
+        ['not_enough_money'] = 'Nincs nálad elég készpénz!',
+        ['not_enough_bank'] = 'Nincs elég pénz a bankszámládon!',
+
+        -- UI
+        ['ui_select_action_1'] = 'Válassz egy',
+        ['ui_select_action_2'] = 'Műveletet',
+        ['ui_buy_storage_1'] = 'Raktár',
+        ['ui_buy_storage_2'] = 'Bérlése',
+        ['ui_open_storage_1'] = 'Raktár',
+        ['ui_open_storage_2'] = 'Megnyitása',
+        ['ui_open_upgrade_1'] = 'Raktár',
+        ['ui_open_upgrade_2'] = 'Bővítése',
+        ['ui_cancel_storage_1'] = 'Szerződés',
+        ['ui_cancel_storage_2'] = 'Felmondása',
+        ['ui_info_title'] = 'Bérleti szerződés:',
+        ['ui_info_text'] =
+        'A levonás {0} naponta történik. Elmaradás esetén a raktár a teljes összeg kiegyenlítéséig zárolásra kerül!',
+
+        ['ui_buy_storage_text'] = 'Szeretnéd kibérelni a(z) {0} {1} raktárat {2} Ft-ért?',
+        ['ui_upgrade_storage_text'] = 'Szeretnél szintet lépni a(z) {0} {1} raktárra {2} Ft-ért?',
+        ['ui_sell_storage'] = 'Biztosan fel szeretnéd mondani a bérleti szerződésedet?',
+
+        ['ui_money'] = 'Fizetés készpénzzel',
+        ['ui_bank'] = 'Fizetés bankkártyával',
+        ['ui_buy'] = 'Bérlés',
+        ['ui_upgrade'] = 'Bővítés / Fejlesztés',
+    },
 }
