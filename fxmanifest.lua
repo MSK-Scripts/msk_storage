@@ -8,17 +8,6 @@ version '1.2.3'
 
 lua54 'yes'
 
-escrow_ignore {
-	'config.lua',
-	'translation.lua',
-
-    'integration/*.lua',
-
-    -- 'client/*.lua',
-    -- 'server/server.lua',
-    -- 'server/server_functions.lua',
-}
-
 shared_script {
     '@es_extended/imports.lua',
     '@msk_core/import.lua',

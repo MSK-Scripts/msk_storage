@@ -19,7 +19,7 @@ GithubUpdater = function()
     if Config.VersionChecker then
         PerformHttpRequest('https://raw.githubusercontent.com/Musiker15/VERSIONS/main/Storage.json', function(errorCode, jsonString, headers)
 			if not jsonString then 
-                print(resourceName .. '^1Update Check failed ^3Please Update to the latest Version: ^9https://keymaster.fivem.net/^0')
+                print(resourceName .. '^1Update Check failed ^3Please Update to the latest Version: ^9https://github.com/MSK-Scripts/msk_storage^0')
                 print(resourceName .. '^2 ✓ Resource loaded^0 - ^5Current Version: ^0' .. CurrentVersion)
                 return
             end
@@ -31,7 +31,7 @@ GithubUpdater = function()
                 print(resourceName .. '^2 ✓ Resource is Up to Date^0 - ^5Current Version: ^2' .. CurrentVersion .. '^0')
             elseif CurrentVersion ~= version then
                 print(resourceName .. '^1 ✗ Resource Outdated. Please Update!^0 - ^5Current Version: ^1' .. CurrentVersion .. '^0')
-                print('^5Latest Version: ^2' .. version .. '^0 - ^6Download here: ^9https://keymaster.fivem.net/^0')
+                print('^5Latest Version: ^2' .. version .. '^0 - ^6Download here: ^9https://github.com/MSK-Scripts/msk_storage^0')
 				if not string.find(CurrentVersion, 'beta') then
 					for i=1, #decoded do 
 						if decoded[i]['version'] == CurrentVersion then
