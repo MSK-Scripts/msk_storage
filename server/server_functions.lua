@@ -38,7 +38,7 @@ end
 buyStorage = function(xPlayer, data)
     data.storageId = tonumber(data.storageId) 
     
-    if xPlayer.getAccount(data.method).money < data.storageData.price then
+    if xPlayer.GetMoney(data.method) < data.storageData.price then
         if data.method == 'money' then
             Config.Notification(xPlayer.source, Translation[Config.Locale]['not_enough_money'], 'error')
         else
@@ -47,7 +47,12 @@ buyStorage = function(xPlayer, data)
         return
     end
 
-    xPlayer.removeAccountMoney(data.method, data.storageData.price)
+    -- RemoveMoney refuses when the balance is short and says so, instead of
+    -- silently going negative like removeAccountMoney did.
+    if not xPlayer.RemoveMoney(data.method, data.storageData.price) then
+        Config.Notification(xPlayer.source, Translation[Config.Locale]['not_enough_bank'], 'error')
+        return
+    end
 
     if doesStorageExist(xPlayer.identifier) then
         database[xPlayer.identifier].unpaid = false
@@ -74,7 +79,7 @@ end
 upgradeStorage = function(xPlayer, data)
     if not database[xPlayer.identifier] then return end
 
-    if xPlayer.getAccount(data.method).money < (data.storageData.price - database[xPlayer.identifier].storageData.price) then
+    if xPlayer.GetMoney(data.method) < (data.storageData.price - database[xPlayer.identifier].storageData.price) then
         if data.method == 'money' then
             Config.Notification(xPlayer.source, Translation[Config.Locale]['not_enough_money'], 'error')
         else
@@ -83,7 +88,11 @@ upgradeStorage = function(xPlayer, data)
         return
     end
 
-    xPlayer.removeAccountMoney(data.method, data.storageData.price - database[xPlayer.identifier].storageData.price) -- Differenz Berechnnung
+    -- Difference between the old and the new storage price.
+    if not xPlayer.RemoveMoney(data.method, data.storageData.price - database[xPlayer.identifier].storageData.price) then
+        Config.Notification(xPlayer.source, Translation[Config.Locale]['not_enough_bank'], 'error')
+        return
+    end
 
     database[xPlayer.identifier] = {
         playerName = xPlayer.name,
@@ -167,46 +176,50 @@ tickCron()
 
 executeCron = function(identifier)
     if not database[identifier] then return end
-    local xPlayer = ESX.GetPlayerFromIdentifier(identifier)
-    
+
+    local price = database[identifier].storageData.price
+    local xPlayer = MSK.GetPlayerFromIdentifier(identifier)
+
     if xPlayer then
-        local money = xPlayer.getAccount('bank').money
-        
-        if money >= database[identifier].storageData.price and Config.MinBudget >= (money - database[identifier].storageData.price) then
-            xPlayer.removeAccountMoney('bank', database[identifier].storageData.price)
-            executeSociety(database[identifier].storageData.price)
+        local money = xPlayer.GetMoney('bank')
+
+        if money >= price and Config.MinBudget >= (money - price) then
+            xPlayer.RemoveMoney('bank', price)
+            executeSociety(price)
         else
             removeCronjob(identifier)
             database[identifier].unpaid = true
         end
-    else
-        MySQL.query("SELECT * FROM users WHERE identifier = ?", {identifier}, function(data)
-            if data and data[1] then
-                local account = json.decode(data[1].accounts)
-                
-                if account.bank >= database[identifier].storageData.price and Config.MinBudget >= (account.bank - database[identifier].storageData.price) then
-                    account.bank = account.bank - database[identifier].storageData.price
-                    MySQL.update("UPDATE users SET accounts = ? WHERE identifier = ?", {json.encode(account), identifier})
-                    executeSociety(database[identifier].storageData.price)
-                else
-                    removeCronjob(identifier)
-                    database[identifier].unpaid = true
-                end
-            end
-        end)
+
+        return
     end
+
+    -- Offline. MSK.Offline knows where each framework keeps the bank balance
+    -- (users.accounts on ESX, players.money on QBCore and Qbox) and deducts in
+    -- a single statement with a WHERE guard. The version before read the row,
+    -- did the arithmetic in Lua and wrote it back, which loses one of two
+    -- deductions that happen at the same moment, and it only knew ESX.
+    local money = MSK.Offline.GetBank(identifier)
+
+    if money and money >= price and Config.MinBudget >= (money - price) then
+        if MSK.Offline.RemoveBank(identifier, price) then
+            executeSociety(price)
+            return
+        end
+    end
+
+    removeCronjob(identifier)
+    database[identifier].unpaid = true
 end
 
 executeSociety = function(storagePrice)
     if not Config.Society.enable then return end
 
+    -- MSK.Society finds whichever banking resource is installed (Renewed-Banking,
+    -- qb-banking, qb-management or esx_addonaccount) instead of assuming
+    -- esx_addonaccount, which only exists on ESX.
     for societyName, percent in pairs(Config.Society.societies) do
-        local price = storagePrice * percent
-
-        TriggerEvent('esx_addonaccount:getSharedAccount', societyName, function(account)
-            if not account then return end
-            account.addMoney(price)
-        end)
+        MSK.Society.AddMoney(societyName, math.floor(storagePrice * percent))
     end
 end
 

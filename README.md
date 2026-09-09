@@ -1,6 +1,6 @@
 # MSK Storage
 
-A rentable warehouse system for FiveM (ESX). Players rent a warehouse from an NPC, get their own personal stash for it and pay rent on a fixed interval. If the rent cannot be collected, the storage stays locked until the open payment is settled.
+A rentable warehouse system for FiveM (ESX, QBCore and Qbox). Players rent a warehouse from an NPC, get their own personal stash for it and pay rent on a fixed interval. If the rent cannot be collected, the storage stays locked until the open payment is settled.
 
 This script used to be a paid resource in the shop and is now free and open source.
 
@@ -20,7 +20,7 @@ This script used to be a paid resource in the shop and is now free and open sour
 
 - Every `Config.PayCron` days (default 7) the rent is charged from the bank account, even while the player is offline (handled directly through the `users` table in that case).
 - `Config.MinBudget` defines how much money has to stay on the account. If the balance is not enough, the contract is flagged as `unpaid` and the storage is locked until the player pays up.
-- Societies can optionally receive a percentage of every rent payment (`Config.Society`, requires `esx_addonaccount`).
+- Societies can optionally receive a percentage of every rent payment (`Config.Society`, needs a banking resource: Renewed-Banking, qb-banking, qb-management or esx_addonaccount).
 
 ### 📍 Locations and NPCs
 
@@ -77,13 +77,13 @@ No SQL file is required. The rental contracts are stored in `storages.json` insi
 
 ## Requirements
 
-- [es_extended](https://github.com/esx-framework/esx_core)
+- ESX, QBCore or Qbox. QBCore and Qbox are supported since v1.3.0, before that `es_extended` was a hard dependency.
 - [oxmysql](https://github.com/overextended/oxmysql)
-- [msk_core](https://docu.msk-scripts.de/)
+- [msk_core](https://docu.msk-scripts.de/) - 4.0.0 or newer since v1.3.0
 
 ## Optional
 
-- [esx_addonaccount](https://github.com/esx-framework/esx_addonaccount) for the society share of the rent income
+- A banking resource for the society share of the rent income: Renewed-Banking, qb-banking, qb-management or [esx_addonaccount](https://github.com/esx-framework/esx_addonaccount)
 
 ## Exports
 
