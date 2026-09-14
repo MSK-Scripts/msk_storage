@@ -7,9 +7,9 @@ Config.VersionChecker = true
 -- !!! This function is clientside AND serverside !!!
 Config.Notification = function(source, message, typ)
     if IsDuplicityVersion() then -- serverside
-        MSK.Notification(source, 'MSK Storage', message, typ, 5000)
+        MSK.Notification(source, { title = 'MSK Storage', message = message, type = typ, duration = 5000 })
     else -- clientside
-        MSK.Notification('MSK Storage', message, typ, 5000)
+        MSK.Notification({ title = 'MSK Storage', message = message, type = typ, duration = 5000 })
     end
 end
 ----------------------------------------------------------------
