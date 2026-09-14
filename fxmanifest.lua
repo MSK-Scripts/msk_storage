@@ -4,7 +4,7 @@ games { 'gta5' }
 author 'Musiker15 - MSK Scripts'
 name 'msk_storage'
 description 'Storage System'
-version '1.3.0'
+version '1.3.1'
 
 lua54 'yes'
 
